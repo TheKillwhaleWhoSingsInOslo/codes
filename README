@@ -1,5 +1,7 @@
 #include "main.h"
 int cir=0;
+int qquit=0;
+int rflag=0;
 int stage=0;
 int situ=0;
 int floor1=1;
@@ -54,7 +56,14 @@ int timer62=0;
 int timer63=0;
 int main(int argc,char *argv[]) {
     Init();
+    next:
     menu();
+    end();
+    if(rflag){
+        rflag=0;
+        init_number();
+        goto next;
+    }
     Quit();
     return 0;
 }
@@ -80,18 +89,20 @@ void menu(){
         }
         if(cir==1){
             if(score>1500&&speed==7){
-                speed+=3;
+                speed+=2;
                 add+=2;
-            }else if(score>5000&&speed==10){
-                speed+=5;
+            }else if(score>5000&&speed==9){
+                speed+=3;
                 add+=3;
             }
             paint_road_and_dino();
             situ++;
         }
         if(SDL_PollEvent(&Event)) {
-            if (Event.type == SDL_QUIT || keyvalue[SDL_SCANCODE_ESCAPE])
+            if (Event.type == SDL_QUIT || keyvalue[SDL_SCANCODE_ESCAPE]) {
+                qquit=1;
                 return;
+            }
             if (keyvalue[SDL_SCANCODE_SPACE]) {
                 if (cir == 0) {
                     cir = 1;
@@ -127,6 +138,14 @@ void menu(){
                          break;
                      }
                 }
+            }else if(keyvalue[SDL_SCANCODE_5]){
+                if(stage!=1){
+                    stage=1;
+                }
+            }else if(keyvalue[SDL_SCANCODE_6]){
+                if(stage!=0){
+                    stage=0;
+                }
             }
         }
     }
@@ -159,70 +178,94 @@ void paint_BG(){
     SDL_FreeSurface(SBG1);
     SDL_FreeSurface(SBG2);
 }
-void paint_road_and_dino(){
+void paint_road_and_dino() {
 
-    score+=add;
-    x_road1-=speed;
-    x_road2-=speed;
-    x_road3-=speed;
-    if(x_road1<-600){
-        x_road1=0;
+    score += add;
+    x_road1 -= speed;
+    x_road2 -= speed;
+    x_road3 -= speed;
+    if (x_road1 < -600) {
+        x_road1 = 0;
     }
-    if(x_road2<-600){
-        x_road2=0;
+    if (x_road2 < -600) {
+        x_road2 = 0;
     }
-    if(x_road3<-600){
-        x_road3=0;
+    if (x_road3 < -600) {
+        x_road3 = 0;
     }
-    SDL_SetRenderDrawColor(Renderer,0xff,0xa0,0xa0,0xff);
+    SDL_SetRenderDrawColor(Renderer, 0xff, 0xa0, 0xa0, 0xff);
     SDL_RenderClear(Renderer);
     char str[10086] = {0};
-    sprintf(str, "HP : %d SCORE : %d",hp,score);
-    TTF_Font *ftt5= TTF_OpenFont("./res/pixel_combat.ttf",32);
-    SDL_Color ctt5={0xff,0xcf,0xc0,0xff};
-    SDL_Surface *stt5= TTF_RenderText_Blended(ftt5,str,ctt5);
-    SDL_Texture *ttt5= SDL_CreateTextureFromSurface(Renderer,stt5);
-    SDL_Rect rtt5={600, 0, stt5->w, stt5->h};
-    SDL_RenderCopy(Renderer,ttt5,NULL,&rtt5);
+    sprintf(str, "HP : %d SCORE : %d", hp, score);
+    TTF_Font *ftt5 = TTF_OpenFont("./res/pixel_combat.ttf", 32);
+    SDL_Color ctt5 = {0xff, 0xcf, 0xc0, 0xff};
+    SDL_Surface *stt5 = TTF_RenderText_Blended(ftt5, str, ctt5);
+    SDL_Texture *ttt5 = SDL_CreateTextureFromSurface(Renderer, stt5);
+    SDL_Rect rtt5 = {600, 0, stt5->w, stt5->h};
+    SDL_RenderCopy(Renderer, ttt5, NULL, &rtt5);
     SDL_DestroyTexture(ttt5);
     SDL_FreeSurface(stt5);
 
-    TTF_Font *ftt4= TTF_OpenFont("./res/Aa粗圆.ttf",32);
-    SDL_Color ctt4={0xff,0xcf,0xcf,0xff};
-    SDL_Surface *spp= TTF_RenderText_Blended(ftt4,"Press '0' to pause",ctt4);
-    SDL_Texture *ttt4= SDL_CreateTextureFromSurface(Renderer,spp);
-    SDL_Rect rtt4={0, 0, 500, 100};
-    SDL_RenderCopy(Renderer,ttt4,NULL,&rtt4);
+    TTF_Font *ftt4 = TTF_OpenFont("./res/Aa粗圆.ttf", 32);
+    SDL_Color ctt4 = {0xff, 0xcf, 0xcf, 0xff};
+    SDL_Surface *spp = TTF_RenderText_Blended(ftt4, "Press '0' to pause", ctt4);
+    SDL_Texture *ttt4 = SDL_CreateTextureFromSurface(Renderer, spp);
+    SDL_Rect rtt4 = {0, 0, 500, 100};
+    SDL_RenderCopy(Renderer, ttt4, NULL, &rtt4);
     SDL_DestroyTexture(ttt4);
     SDL_FreeSurface(spp);
 
-    SDL_Surface *SBG1= IMG_Load("./res/dino-move-1.png");
-    SDL_Surface *SBG2= IMG_Load("./res/ground.png");
-    SDL_Surface *SBG3= IMG_Load("./res/dino-move-2.png");
+    SDL_Surface *SBG1 = IMG_Load("./res/dino-move-1.png");
+    SDL_Surface *SBG2 = IMG_Load("./res/ground.png");
+    SDL_Surface *SBG3 = IMG_Load("./res/dino-move-2.png");
+    SDL_Surface *SBG4 = IMG_Load("./res/dino-duck-1.png");
+    SDL_Surface *SBG5 = IMG_Load("./res/dino-duck-2.png");
     SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
-    SDL_Texture *TBG2= SDL_CreateTextureFromSurface(Renderer,SBG2);
-    SDL_Texture *TBG3= SDL_CreateTextureFromSurface(Renderer,SBG3);
-    SDL_Rect RBG1={100, 245, 75, 75};
-    SDL_Rect RBG5={100, 45, 75, 75};
-    SDL_Rect RBG6={100, 445, 75, 75};
-    SDL_Rect RBG2={.x=x_road1, .y=250,1680,100};
-    SDL_Rect RBG3={.x=x_road2, .y=50,1680,100};
-    SDL_Rect RBG4={.x=x_road3, .y=450,1680,100};
-    if((situ/5)%2==0) {
-        if(floor1==1) {
-            SDL_RenderCopy(Renderer, TBG1, NULL, &RBG1);
-        }else if(floor1==0){
-            SDL_RenderCopy(Renderer, TBG1, NULL, &RBG5);
-        }else if(floor1==2){
-            SDL_RenderCopy(Renderer, TBG1, NULL, &RBG6);
+    SDL_Texture *TBG2 = SDL_CreateTextureFromSurface(Renderer, SBG2);
+    SDL_Texture *TBG3 = SDL_CreateTextureFromSurface(Renderer, SBG3);
+    SDL_Texture *TBG4 = SDL_CreateTextureFromSurface(Renderer, SBG4);
+    SDL_Texture *TBG5 = SDL_CreateTextureFromSurface(Renderer, SBG5);
+    SDL_Rect RBG1 = {100, 245, 75, 75};
+    SDL_Rect RBG5 = {100, 45, 75, 75};
+    SDL_Rect RBG6 = {100, 445, 75, 75};
+    SDL_Rect RBG2 = {.x=x_road1, .y=250, 1680, 100};
+    SDL_Rect RBG3 = {.x=x_road2, .y=50, 1680, 100};
+    SDL_Rect RBG4 = {.x=x_road3, .y=450, 1680, 100};
+    if (stage == 0){
+        if ((situ / 5) % 2 == 0) {
+            if (floor1 == 1) {
+                SDL_RenderCopy(Renderer, TBG1, NULL, &RBG1);
+            } else if (floor1 == 0) {
+                SDL_RenderCopy(Renderer, TBG1, NULL, &RBG5);
+            } else if (floor1 == 2) {
+                SDL_RenderCopy(Renderer, TBG1, NULL, &RBG6);
+            }
+        } else {
+            if (floor1 == 1) {
+                SDL_RenderCopy(Renderer, TBG3, NULL, &RBG1);
+            } else if (floor1 == 0) {
+                SDL_RenderCopy(Renderer, TBG3, NULL, &RBG5);
+            } else if (floor1 == 2) {
+                SDL_RenderCopy(Renderer, TBG3, NULL, &RBG6);
+            }
         }
-    }else{
-        if(floor1==1) {
-            SDL_RenderCopy(Renderer, TBG3, NULL, &RBG1);
-        }else if(floor1==0){
-            SDL_RenderCopy(Renderer, TBG3, NULL, &RBG5);
-        }else if(floor1==2){
-            SDL_RenderCopy(Renderer, TBG3, NULL, &RBG6);
+    }else if(stage==1){
+        if ((situ / 5) % 2 == 0) {
+            if (floor1 == 1) {
+                SDL_RenderCopy(Renderer, TBG4, NULL, &RBG1);
+            } else if (floor1 == 0) {
+                SDL_RenderCopy(Renderer, TBG4, NULL, &RBG5);
+            } else if (floor1 == 2) {
+                SDL_RenderCopy(Renderer, TBG4, NULL, &RBG6);
+            }
+        } else {
+            if (floor1 == 1) {
+                SDL_RenderCopy(Renderer, TBG5, NULL, &RBG1);
+            } else if (floor1 == 0) {
+                SDL_RenderCopy(Renderer, TBG5, NULL, &RBG5);
+            } else if (floor1 == 2) {
+                SDL_RenderCopy(Renderer, TBG5, NULL, &RBG6);
+            }
         }
     }
     if(situ%100==5&&flag1==0) {
@@ -256,13 +299,13 @@ void paint_road_and_dino(){
     SDL_DestroyTexture(TBG1);
     SDL_DestroyTexture(TBG2);
     SDL_DestroyTexture(TBG3);
+    SDL_DestroyTexture(TBG4);
+    SDL_DestroyTexture(TBG5);
     SDL_FreeSurface(SBG1);
     SDL_FreeSurface(SBG2);
     SDL_FreeSurface(SBG3);
-    if (cir == 1) {
-        SDL_UpdateWindowSurface(Window);
-        SDL_Delay(5);
-    }
+    SDL_FreeSurface(SBG4);
+    SDL_FreeSurface(SBG5);
 }
 void gold_create(){
     ran=rand();
@@ -354,11 +397,11 @@ void gold_printf3(){
     SDL_FreeSurface(SBG1);
 }
 void create_object1(){
-    ran2=1+rand();
+    ran2=5+rand();
     if(ran2%3==0){
         SDL_Surface *SBG1= IMG_Load("./res/bird_1.png");
         SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
-        SDL_Rect RBG1={x_block11, 215, 75, 75};
+        SDL_Rect RBG1={x_block11, 215, 50, 50};
         SDL_RenderCopy(Renderer, TBG1, NULL, &RBG1);
         SDL_DestroyTexture(TBG1);
         SDL_FreeSurface(SBG1);
@@ -366,7 +409,7 @@ void create_object1(){
     }else if(ran2%3==1){
         SDL_Surface *SBG1= IMG_Load("./res/bird_1.png");
         SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
-        SDL_Rect RBG1={x_block12, 15, 75, 75};
+        SDL_Rect RBG1={x_block12, 15, 50, 50};
         SDL_RenderCopy(Renderer, TBG1, NULL, &RBG1);
         SDL_DestroyTexture(TBG1);
         SDL_FreeSurface(SBG1);
@@ -374,7 +417,7 @@ void create_object1(){
     }else if(ran2%3==2){
         SDL_Surface *SBG1= IMG_Load("./res/bird_1.png");
         SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
-        SDL_Rect RBG1={x_block13, 415, 75, 75};
+        SDL_Rect RBG1={x_block13, 415, 50, 50};
         SDL_RenderCopy(Renderer, TBG1, NULL, &RBG1);
         SDL_DestroyTexture(TBG1);
         SDL_FreeSurface(SBG1);
@@ -489,7 +532,7 @@ void object_printf13(){
     SDL_FreeSurface(SBG1);
 }
 void paint_pause(){
-    
+
 }
 void paint_font(){
     TTF_Font *ftt1= TTF_OpenFont("./res/pixel_combat.ttf",64);
@@ -509,4 +552,95 @@ void paint_font(){
     SDL_DestroyTexture(ttt2);
     SDL_FreeSurface(stt1);
     SDL_FreeSurface(stt2);
+}
+void end(){
+    const Uint8 *keyvalue = SDL_GetKeyboardState(NULL);
+    if(qquit){
+        return;
+    }
+    paint_end();
+    if(SDL_WaitEvent(&Event)){
+        if (keyvalue[SDL_SCANCODE_7]){
+            return;
+        }else if(keyvalue[SDL_SCANCODE_8]){
+            rflag=1;
+            return;
+        }
+    }
+}
+void paint_end(){
+    SDL_SetRenderDrawColor(Renderer, 0xff, 0xff, 0xff, 0xff);
+    SDL_RenderClear(Renderer);
+    char str1[10005] = {0};
+    sprintf(str1, "SCORE : %d",  score);
+    TTF_Font *ftt5 = TTF_OpenFont("./res/pixel_combat.ttf", 72);
+    TTF_Font *ftt6 = TTF_OpenFont("./res/pixel_combat.ttf", 32);
+    SDL_Color ctt5 = {0xff, 0xcf, 0xc0, 0xff};
+    SDL_Surface *stt5 = TTF_RenderText_Blended(ftt5, str1, ctt5);
+    SDL_Surface *stt6 = TTF_RenderText_Blended(ftt6, "press '7' to quit,press '8' to restart", ctt5);
+    SDL_Texture *ttt5 = SDL_CreateTextureFromSurface(Renderer, stt5);
+    SDL_Texture *ttt6 = SDL_CreateTextureFromSurface(Renderer, stt6);
+    SDL_Rect rtt5 = {250, 100, stt5->w, stt5->h};
+    SDL_Rect rtt6 = {150, 400, stt6->w, stt6->h};
+    SDL_RenderCopy(Renderer, ttt5, NULL, &rtt5);
+    SDL_RenderCopy(Renderer, ttt6, NULL, &rtt6);
+    SDL_RenderPresent(Renderer);
+    SDL_DestroyTexture(ttt5);
+    SDL_DestroyTexture(ttt6);
+    SDL_FreeSurface(stt5);
+    SDL_FreeSurface(stt6);
+}
+void init_number(){
+     cir=0;
+     qquit=0;
+     rflag=0;
+     stage=0;
+     situ=0;
+     floor1=1;
+     score=0;
+     add=1;
+     speed=7;
+     hp=3;
+     v=0;
+     g=5;
+     y_dino=245;
+     flag1=0;
+     flag2=0;
+     flag3=0;
+     flag41=0;
+     flag42=0;
+     flag43=0;
+     flag51=0;
+     flag52=0;
+     flag53=0;
+     flag61=0;
+     flag62=0;
+     flag63=0;
+     x_road1=-600;
+     x_road2=-600;
+     x_road3=-600;
+     x_block11=1000;
+     x_block12=1000;
+     x_block13=1000;
+     x_block21=1000;
+     x_block22=1000;
+     x_block23=1000;
+     x_block31=1000;
+     x_block32=1000;
+     x_block33=1000;
+     x_gold1 = 1000;
+     x_gold2 = 1000;
+     x_gold3 = 1000;
+     timer=0;
+     timer2=0;
+     timer3=0;
+     timer41=0;
+     timer42=0;
+     timer43=0;
+     timer51=0;
+     timer52=0;
+     timer53=0;
+     timer61=0;
+     timer62=0;
+     timer63=0;
 }
