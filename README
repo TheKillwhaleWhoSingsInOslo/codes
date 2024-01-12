@@ -12,9 +12,7 @@ int hp=3;
 int ran;
 int ran2;
 int ran3;
-int v=0;
-int g=5;
-int y_dino=245;
+int ran4;
 int flag1=0;
 int flag2=0;
 int flag3=0;
@@ -114,7 +112,6 @@ void menu(){
                     }
                 }
             }else if(keyvalue[SDL_SCANCODE_2]){
-
                 if (cir == 1) {
                     if (floor1 == 0) {
                         floor1=1;
@@ -134,16 +131,26 @@ void menu(){
                 }
             }else if(keyvalue[SDL_SCANCODE_0]){
                 while(1){
-                     if(keyvalue[SDL_SCANCODE_9]){
-                         break;
-                     }
+                    if(SDL_PollEvent(&Event)) {
+                        if (keyvalue[SDL_SCANCODE_9]) {
+                            break;
+                        }
+                    }
                 }
             }else if(keyvalue[SDL_SCANCODE_5]){
                 if(stage!=1){
                     stage=1;
                 }
             }else if(keyvalue[SDL_SCANCODE_6]){
-                if(stage!=0){
+                if(stage==1){
+                    stage=0;
+                }
+            }else if(keyvalue[SDL_SCANCODE_UP]){
+                if(stage!=2){
+                    stage=2;
+                }
+            }else if(keyvalue[SDL_SCANCODE_DOWN]){
+                if(stage==2){
                     stage=0;
                 }
             }
@@ -171,7 +178,6 @@ void paint_BG(){
     SDL_RenderCopy(Renderer,TBG2,NULL,&RBG2);
     SDL_RenderCopy(Renderer,TBG2,NULL,&RBG3);
     SDL_RenderCopy(Renderer,TBG2,NULL,&RBG4);
-
     SDL_RenderPresent(Renderer);
     SDL_DestroyTexture(TBG1);
     SDL_DestroyTexture(TBG2);
@@ -179,7 +185,6 @@ void paint_BG(){
     SDL_FreeSurface(SBG2);
 }
 void paint_road_and_dino() {
-
     score += add;
     x_road1 -= speed;
     x_road2 -= speed;
@@ -214,7 +219,7 @@ void paint_road_and_dino() {
     SDL_RenderCopy(Renderer, ttt4, NULL, &rtt4);
     SDL_DestroyTexture(ttt4);
     SDL_FreeSurface(spp);
-
+    SDL_Surface *SBG6 = IMG_Load("./res/dino.png");
     SDL_Surface *SBG1 = IMG_Load("./res/dino-move-1.png");
     SDL_Surface *SBG2 = IMG_Load("./res/ground.png");
     SDL_Surface *SBG3 = IMG_Load("./res/dino-move-2.png");
@@ -225,9 +230,13 @@ void paint_road_and_dino() {
     SDL_Texture *TBG3 = SDL_CreateTextureFromSurface(Renderer, SBG3);
     SDL_Texture *TBG4 = SDL_CreateTextureFromSurface(Renderer, SBG4);
     SDL_Texture *TBG5 = SDL_CreateTextureFromSurface(Renderer, SBG5);
+    SDL_Texture *TBG6 = SDL_CreateTextureFromSurface(Renderer, SBG6);
     SDL_Rect RBG1 = {100, 245, 75, 75};
     SDL_Rect RBG5 = {100, 45, 75, 75};
     SDL_Rect RBG6 = {100, 445, 75, 75};
+    SDL_Rect RBG7 = {100, 200,75,75};
+    SDL_Rect RBG8 = {100, 0,75,75};
+    SDL_Rect RBG9 = {100, 400,75,75};
     SDL_Rect RBG2 = {.x=x_road1, .y=250, 1680, 100};
     SDL_Rect RBG3 = {.x=x_road2, .y=50, 1680, 100};
     SDL_Rect RBG4 = {.x=x_road3, .y=450, 1680, 100};
@@ -267,12 +276,26 @@ void paint_road_and_dino() {
                 SDL_RenderCopy(Renderer, TBG5, NULL, &RBG6);
             }
         }
+    }else if(stage==2){
+        if (floor1 == 1) {
+            SDL_RenderCopy(Renderer, TBG6, NULL, &RBG7);
+        } else if (floor1 == 0) {
+            SDL_RenderCopy(Renderer, TBG6, NULL, &RBG8);
+        } else if (floor1 == 2) {
+            SDL_RenderCopy(Renderer, TBG6, NULL, &RBG9);
+        }
     }
-    if(situ%100==5&&flag1==0) {
+    if(situ%75==5&&flag1==0) {
         gold_create();
     }
-    if(situ%100==27){
+    if(situ%75==27){
         create_object1();
+    }
+    if(situ%100==70){
+        create_object2();
+    }
+    if(situ%125==44){
+        create_object3();
     }
     if(flag1){
         gold_printf1();
@@ -292,6 +315,24 @@ void paint_road_and_dino() {
     if(flag43){
         object_printf13();
     }
+    if(flag51){
+        object_printf21();
+    }
+    if(flag52){
+        object_printf22();
+    }
+    if(flag53){
+        object_printf23();
+    }
+    if(flag61){
+        object_printf31();
+    }
+    if(flag62){
+        object_printf32();
+    }
+    if(flag63){
+        object_printf33();
+    }
     SDL_RenderCopy(Renderer,TBG2,NULL,&RBG2);
     SDL_RenderCopy(Renderer,TBG2,NULL,&RBG3);
     SDL_RenderCopy(Renderer,TBG2,NULL,&RBG4);
@@ -306,6 +347,8 @@ void paint_road_and_dino() {
     SDL_FreeSurface(SBG3);
     SDL_FreeSurface(SBG4);
     SDL_FreeSurface(SBG5);
+    TTF_CloseFont(ftt5);
+    TTF_CloseFont(ftt4);
 }
 void gold_create(){
     ran=rand();
@@ -334,7 +377,6 @@ void gold_create(){
         SDL_DestroyTexture(TBG1);
         SDL_FreeSurface(SBG1);
     }
-
 }
 void gold_printf1(){
     timer++;
@@ -425,27 +467,27 @@ void create_object1(){
     }
 }
 void create_object2(){
-    ran=rand();
-    if(ran%3==0){
+    ran3=rand()%10;
+    if(ran3%3==0){
         SDL_Surface *SBG1= IMG_Load("./res/cactus.png");
         SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
-        SDL_Rect RBG1={x_block21, 245, 50, 50};
+        SDL_Rect RBG1={x_block21, 275, 50, 50};
         SDL_RenderCopy(Renderer, TBG1, NULL, &RBG1);
         SDL_DestroyTexture(TBG1);
         SDL_FreeSurface(SBG1);
         flag51=1;
-    }else if(ran%3==1){
+    }else if(ran3%3==1){
         SDL_Surface *SBG1= IMG_Load("./res/cactus.png");
         SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
-        SDL_Rect RBG1={x_block22, 45, 50, 50};
+        SDL_Rect RBG1={x_block22, 75, 50, 50};
         SDL_RenderCopy(Renderer, TBG1, NULL, &RBG1);
         SDL_DestroyTexture(TBG1);
         SDL_FreeSurface(SBG1);
         flag52=1;
-    }else if(ran%3==2){
+    }else if(ran3%3==2){
         SDL_Surface *SBG1= IMG_Load("./res/cactus.png");
         SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
-        SDL_Rect RBG1={x_block23, 445, 50, 50};
+        SDL_Rect RBG1={x_block23, 475, 50, 50};
         SDL_RenderCopy(Renderer, TBG1, NULL, &RBG1);
         SDL_DestroyTexture(TBG1);
         SDL_FreeSurface(SBG1);
@@ -453,24 +495,24 @@ void create_object2(){
     }
 }
 void create_object3(){
-    ran=rand();
-    if(ran%3==0){
+    ran4=8+rand();
+    if(ran4%3==0){
         SDL_Surface *SBG1= IMG_Load("./res/cactus_quadruplet.png");
         SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
-        SDL_Rect RBG1={x_block31, 220, 100, 100};
+        SDL_Rect RBG1={x_block31, 225, 100, 100};
         SDL_RenderCopy(Renderer, TBG1, NULL, &RBG1);
         SDL_DestroyTexture(TBG1);
         SDL_FreeSurface(SBG1);
         flag61=1;
-    }else if(ran%3==1){
+    }else if(ran4%3==1){
         SDL_Surface *SBG1= IMG_Load("./res/cactus_quadruplet.png");
         SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
-        SDL_Rect RBG1={x_block32, 20, 100, 100};
+        SDL_Rect RBG1={x_block32, 25, 100, 100};
         SDL_RenderCopy(Renderer, TBG1, NULL, &RBG1);
         SDL_DestroyTexture(TBG1);
         SDL_FreeSurface(SBG1);
         flag62=1;
-    }else if(ran%3==2){
+    }else if(ran4%3==2){
         SDL_Surface *SBG1= IMG_Load("./res/cactus_quadruplet.png");
         SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
         SDL_Rect RBG1={x_block33, 425, 100, 100};
@@ -531,8 +573,107 @@ void object_printf13(){
     SDL_DestroyTexture(TBG1);
     SDL_FreeSurface(SBG1);
 }
-void paint_pause(){
-
+void object_printf21(){
+    timer51++;
+    x_block21-=speed;
+    SDL_Surface *SBG1= IMG_Load("./res/cactus.png");
+    SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
+    SDL_Rect RBG1={x_block21, 275, 50, 50};
+    if(floor1==1&&timer51==(900/speed)&&stage!=2){
+        hp--;
+    }else if(timer51>1000/speed){
+        flag51=0;
+        x_block21=1000;
+        timer51=0;
+    }
+    SDL_RenderCopy(Renderer, TBG1, NULL, &RBG1);
+    SDL_DestroyTexture(TBG1);
+    SDL_FreeSurface(SBG1);
+}
+void object_printf22(){
+    timer52++;
+    x_block22-=speed;
+    SDL_Surface *SBG1= IMG_Load("./res/cactus.png");
+    SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
+    SDL_Rect RBG1={x_block22, 75, 50, 50};
+    if(floor1==0&&timer52==(900/speed)&&stage!=2){
+        hp--;
+    }else if(timer52>1000/speed){
+        flag52=0;
+        x_block22=1000;
+        timer52=0;
+    }
+    SDL_RenderCopy(Renderer, TBG1, NULL, &RBG1);
+    SDL_DestroyTexture(TBG1);
+    SDL_FreeSurface(SBG1);
+}
+void object_printf23(){
+    timer53++;
+    x_block23-=speed;
+    SDL_Surface *SBG1= IMG_Load("./res/cactus.png");
+    SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
+    SDL_Rect RBG1={x_block23, 475, 50, 50};
+    if(floor1==2&&timer53==(900/speed)&&stage!=2){
+        hp--;
+    }else if(timer53>1000/speed){
+        flag53=0;
+        x_block23=1000;
+        timer53=0;
+    }
+    SDL_RenderCopy(Renderer, TBG1, NULL, &RBG1);
+    SDL_DestroyTexture(TBG1);
+    SDL_FreeSurface(SBG1);
+}
+void object_printf31(){
+    timer61++;
+    x_block31-=speed;
+    SDL_Surface *SBG1= IMG_Load("./res/cactus_quadruplet.png");
+    SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
+    SDL_Rect RBG1={x_block31, 225, 100, 100};
+    if(floor1==1&&timer61==(900/speed)){
+        hp--;
+    }else if(timer61>1000/speed){
+        flag61=0;
+        x_block31=1000;
+        timer61=0;
+    }
+    SDL_RenderCopy(Renderer, TBG1, NULL, &RBG1);
+    SDL_DestroyTexture(TBG1);
+    SDL_FreeSurface(SBG1);
+}
+void object_printf32(){
+    timer62++;
+    x_block32-=speed;
+    SDL_Surface *SBG1= IMG_Load("./res/cactus_quadruplet.png");
+    SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
+    SDL_Rect RBG1={x_block32, 25, 100, 100};
+    if(floor1==0&&timer62==(900/speed)){
+        hp--;
+    }else if(timer62>1000/speed){
+        flag62=0;
+        x_block32=1000;
+        timer62=0;
+    }
+    SDL_RenderCopy(Renderer, TBG1, NULL, &RBG1);
+    SDL_DestroyTexture(TBG1);
+    SDL_FreeSurface(SBG1);
+}
+void object_printf33(){
+    timer63++;
+    x_block33-=speed;
+    SDL_Surface *SBG1= IMG_Load("./res/cactus_quadruplet.png");
+    SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
+    SDL_Rect RBG1={x_block33, 425, 100, 100};
+    if(floor1==2&&timer63==(900/speed)){
+        hp--;
+    }else if(timer63>1000/speed){
+        flag63=0;
+        x_block33=1000;
+        timer63=0;
+    }
+    SDL_RenderCopy(Renderer, TBG1, NULL, &RBG1);
+    SDL_DestroyTexture(TBG1);
+    SDL_FreeSurface(SBG1);
 }
 void paint_font(){
     TTF_Font *ftt1= TTF_OpenFont("./res/pixel_combat.ttf",64);
@@ -552,6 +693,8 @@ void paint_font(){
     SDL_DestroyTexture(ttt2);
     SDL_FreeSurface(stt1);
     SDL_FreeSurface(stt2);
+    TTF_CloseFont(ftt1);
+    TTF_CloseFont(ftt2);
 }
 void end(){
     const Uint8 *keyvalue = SDL_GetKeyboardState(NULL);
@@ -559,12 +702,17 @@ void end(){
         return;
     }
     paint_end();
-    if(SDL_WaitEvent(&Event)){
-        if (keyvalue[SDL_SCANCODE_7]){
-            return;
-        }else if(keyvalue[SDL_SCANCODE_8]){
-            rflag=1;
-            return;
+    while(1) {
+        if (SDL_WaitEvent(&Event)) {
+            if (Event.type == SDL_QUIT || keyvalue[SDL_SCANCODE_ESCAPE]) {
+                return;
+            }
+            if (keyvalue[SDL_SCANCODE_7]) {
+                return;
+            } else if (keyvalue[SDL_SCANCODE_8]) {
+                rflag = 1;
+                return;
+            }
         }
     }
 }
@@ -589,6 +737,8 @@ void paint_end(){
     SDL_DestroyTexture(ttt6);
     SDL_FreeSurface(stt5);
     SDL_FreeSurface(stt6);
+    TTF_CloseFont(ftt5);
+    TTF_CloseFont(ftt6);
 }
 void init_number(){
      cir=0;
@@ -601,9 +751,6 @@ void init_number(){
      add=1;
      speed=7;
      hp=3;
-     v=0;
-     g=5;
-     y_dino=245;
      flag1=0;
      flag2=0;
      flag3=0;
