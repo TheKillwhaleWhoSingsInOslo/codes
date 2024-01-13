@@ -1,11 +1,15 @@
 #include "main.h"
 int cir=0;
+int ifshield=0;
+int ifstar=0;
+int startimer=0;
 int qquit=0;
 int rflag=0;
 int stage=0;
 int situ=0;
 int floor1=1;
 int score=0;
+int highest_score=0;
 int add=1;
 int speed=7;
 int hp=3;
@@ -25,9 +29,21 @@ int flag53=0;
 int flag61=0;
 int flag62=0;
 int flag63=0;
+int flag11=0;
+int flag12=0;
+int flag13=0;
+int flag21=0;
+int flag22=0;
+int flag23=0;
 int x_road1=-600;
 int x_road2=-600;
 int x_road3=-600;
+int x_shield1=1000;
+int x_shield2=1000;
+int x_shield3=1000;
+int x_star1=1000;
+int x_star2=1000;
+int x_star3=1000;
 int x_block11=1000;
 int x_block12=1000;
 int x_block13=1000;
@@ -52,6 +68,12 @@ int timer53=0;
 int timer61=0;
 int timer62=0;
 int timer63=0;
+int timer11=0;
+int timer12=0;
+int timer13=0;
+int timer21=0;
+int timer22=0;
+int timer23=0;
 int main(int argc,char *argv[]) {
     Init();
     next:
@@ -131,9 +153,19 @@ void menu(){
                 }
             }else if(keyvalue[SDL_SCANCODE_0]){
                 while(1){
+                    SDL_Surface *SBG1= IMG_Load("./res/5]VLUJ8XP2XH3Y$M)8VD%4C.png");
+                    SDL_Texture *TBG1= SDL_CreateTextureFromSurface(Renderer,SBG1);
+                    SDL_Rect RBG1 = {0, 0, 1080, 600};
+                    SDL_RenderCopy(Renderer,TBG1,NULL,&RBG1);
+                    SDL_RenderPresent(Renderer);
+                    SDL_DestroyTexture(TBG1);
+                    SDL_FreeSurface(SBG1);
                     if(SDL_PollEvent(&Event)) {
                         if (keyvalue[SDL_SCANCODE_9]) {
                             break;
+                        }else if (Event.type == SDL_QUIT || keyvalue[SDL_SCANCODE_ESCAPE]) {
+                            qquit=1;
+                            return;
                         }
                     }
                 }
@@ -185,6 +217,13 @@ void paint_BG(){
     SDL_FreeSurface(SBG2);
 }
 void paint_road_and_dino() {
+    if(ifstar){
+        score+=add;
+        startimer++;
+    }
+    if(startimer>1250){
+        ifstar=0;
+    }
     score += add;
     x_road1 -= speed;
     x_road2 -= speed;
@@ -208,8 +247,7 @@ void paint_road_and_dino() {
     SDL_Texture *ttt5 = SDL_CreateTextureFromSurface(Renderer, stt5);
     SDL_Rect rtt5 = {600, 0, stt5->w, stt5->h};
     SDL_RenderCopy(Renderer, ttt5, NULL, &rtt5);
-    SDL_DestroyTexture(ttt5);
-    SDL_FreeSurface(stt5);
+
 
     TTF_Font *ftt4 = TTF_OpenFont("./res/Aa粗圆.ttf", 32);
     SDL_Color ctt4 = {0xff, 0xcf, 0xcf, 0xff};
@@ -217,20 +255,21 @@ void paint_road_and_dino() {
     SDL_Texture *ttt4 = SDL_CreateTextureFromSurface(Renderer, spp);
     SDL_Rect rtt4 = {0, 0, 500, 100};
     SDL_RenderCopy(Renderer, ttt4, NULL, &rtt4);
-    SDL_DestroyTexture(ttt4);
-    SDL_FreeSurface(spp);
+
     SDL_Surface *SBG6 = IMG_Load("./res/dino.png");
     SDL_Surface *SBG1 = IMG_Load("./res/dino-move-1.png");
     SDL_Surface *SBG2 = IMG_Load("./res/ground.png");
     SDL_Surface *SBG3 = IMG_Load("./res/dino-move-2.png");
     SDL_Surface *SBG4 = IMG_Load("./res/dino-duck-1.png");
     SDL_Surface *SBG5 = IMG_Load("./res/dino-duck-2.png");
+    SDL_Surface *SBG7 = IMG_Load("./res/7167faee5b0b0bcb2af8d160ef280383(1)(1).png");
     SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
     SDL_Texture *TBG2 = SDL_CreateTextureFromSurface(Renderer, SBG2);
     SDL_Texture *TBG3 = SDL_CreateTextureFromSurface(Renderer, SBG3);
     SDL_Texture *TBG4 = SDL_CreateTextureFromSurface(Renderer, SBG4);
     SDL_Texture *TBG5 = SDL_CreateTextureFromSurface(Renderer, SBG5);
     SDL_Texture *TBG6 = SDL_CreateTextureFromSurface(Renderer, SBG6);
+    SDL_Texture *TBG7 = SDL_CreateTextureFromSurface(Renderer, SBG7);
     SDL_Rect RBG1 = {100, 245, 75, 75};
     SDL_Rect RBG5 = {100, 45, 75, 75};
     SDL_Rect RBG6 = {100, 445, 75, 75};
@@ -240,62 +279,132 @@ void paint_road_and_dino() {
     SDL_Rect RBG2 = {.x=x_road1, .y=250, 1680, 100};
     SDL_Rect RBG3 = {.x=x_road2, .y=50, 1680, 100};
     SDL_Rect RBG4 = {.x=x_road3, .y=450, 1680, 100};
+
     if (stage == 0){
         if ((situ / 5) % 2 == 0) {
             if (floor1 == 1) {
                 SDL_RenderCopy(Renderer, TBG1, NULL, &RBG1);
+                if(ifshield){
+                    SDL_RenderCopy(Renderer, TBG7, NULL, &RBG1);
+                }
             } else if (floor1 == 0) {
                 SDL_RenderCopy(Renderer, TBG1, NULL, &RBG5);
+                if(ifshield){
+                    SDL_RenderCopy(Renderer, TBG7, NULL, &RBG5);
+                }
             } else if (floor1 == 2) {
                 SDL_RenderCopy(Renderer, TBG1, NULL, &RBG6);
+                if(ifshield){
+                    SDL_RenderCopy(Renderer, TBG7, NULL, &RBG6);
+                }
             }
         } else {
             if (floor1 == 1) {
                 SDL_RenderCopy(Renderer, TBG3, NULL, &RBG1);
+                if(ifshield){
+                    SDL_RenderCopy(Renderer, TBG7, NULL, &RBG1);
+                }
             } else if (floor1 == 0) {
                 SDL_RenderCopy(Renderer, TBG3, NULL, &RBG5);
+                if(ifshield){
+                    SDL_RenderCopy(Renderer, TBG7, NULL, &RBG5);
+                }
             } else if (floor1 == 2) {
                 SDL_RenderCopy(Renderer, TBG3, NULL, &RBG6);
+                if(ifshield){
+                    SDL_RenderCopy(Renderer, TBG7, NULL, &RBG6);
+                }
             }
         }
     }else if(stage==1){
         if ((situ / 5) % 2 == 0) {
             if (floor1 == 1) {
                 SDL_RenderCopy(Renderer, TBG4, NULL, &RBG1);
+                if(ifshield){
+                    SDL_RenderCopy(Renderer, TBG7, NULL, &RBG1);
+                }
             } else if (floor1 == 0) {
                 SDL_RenderCopy(Renderer, TBG4, NULL, &RBG5);
+                if(ifshield){
+                    SDL_RenderCopy(Renderer, TBG7, NULL, &RBG5);
+                }
             } else if (floor1 == 2) {
                 SDL_RenderCopy(Renderer, TBG4, NULL, &RBG6);
+                if(ifshield){
+                    SDL_RenderCopy(Renderer, TBG7, NULL, &RBG6);
+                }
             }
         } else {
             if (floor1 == 1) {
                 SDL_RenderCopy(Renderer, TBG5, NULL, &RBG1);
+                if(ifshield){
+                    SDL_RenderCopy(Renderer, TBG7, NULL, &RBG1);
+                }
             } else if (floor1 == 0) {
                 SDL_RenderCopy(Renderer, TBG5, NULL, &RBG5);
+                if(ifshield){
+                    SDL_RenderCopy(Renderer, TBG7, NULL, &RBG5);
+                }
             } else if (floor1 == 2) {
                 SDL_RenderCopy(Renderer, TBG5, NULL, &RBG6);
+                if(ifshield){
+                    SDL_RenderCopy(Renderer, TBG7, NULL, &RBG6);
+                }
             }
         }
     }else if(stage==2){
         if (floor1 == 1) {
             SDL_RenderCopy(Renderer, TBG6, NULL, &RBG7);
+            if(ifshield){
+                SDL_RenderCopy(Renderer, TBG7, NULL, &RBG7);
+            }
         } else if (floor1 == 0) {
             SDL_RenderCopy(Renderer, TBG6, NULL, &RBG8);
+            if(ifshield){
+                SDL_RenderCopy(Renderer, TBG7, NULL, &RBG8);
+            }
         } else if (floor1 == 2) {
             SDL_RenderCopy(Renderer, TBG6, NULL, &RBG9);
+            if(ifshield){
+                SDL_RenderCopy(Renderer, TBG7, NULL, &RBG9);
+            }
         }
     }
-    if(situ%75==5&&flag1==0) {
+    if(situ%60==47&&flag1==0) {
         gold_create();
     }
-    if(situ%75==27){
+    if(situ%75==59){
         create_object1();
     }
-    if(situ%100==70){
+    if(situ%100==73){
         create_object2();
     }
-    if(situ%125==44){
+    if(situ%150==119){
         create_object3();
+    }
+    if(situ%200==61){
+        shield_create();
+    }
+    if(situ%400==97){
+        star_create();
+    }
+    if(flag11){
+        shield_printf1();
+    }
+    if(flag12){
+        shield_printf2();
+    }
+    if(flag13){
+        shield_printf3();
+    }
+    if(flag21){
+        star_printf1();
+    }
+    if(flag22){
+        star_printf2();
+    }
+    if(flag23){
+        star_printf3();
     }
     if(flag1){
         gold_printf1();
@@ -342,18 +451,26 @@ void paint_road_and_dino() {
     SDL_DestroyTexture(TBG3);
     SDL_DestroyTexture(TBG4);
     SDL_DestroyTexture(TBG5);
+    SDL_DestroyTexture(TBG6);
+    SDL_DestroyTexture(TBG7);
+    SDL_DestroyTexture(ttt4);
+    SDL_DestroyTexture(ttt5);
     SDL_FreeSurface(SBG1);
     SDL_FreeSurface(SBG2);
     SDL_FreeSurface(SBG3);
     SDL_FreeSurface(SBG4);
     SDL_FreeSurface(SBG5);
+    SDL_FreeSurface(SBG6);
+    SDL_FreeSurface(SBG7);
+    SDL_FreeSurface(stt5);
+    SDL_FreeSurface(spp);
     TTF_CloseFont(ftt5);
     TTF_CloseFont(ftt4);
 }
 void gold_create(){
     ran=rand();
     if(ran%3==0){
-        SDL_Surface *SBG1= IMG_Load("./res/1087.png_860.png");
+        SDL_Surface *SBG1= IMG_Load("./res/1087.png_860(1)(1).png");
         SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
         SDL_Rect RBG1={x_gold1, 245, 75, 75};
         SDL_RenderCopy(Renderer, TBG1, NULL, &RBG1);
@@ -361,7 +478,7 @@ void gold_create(){
         SDL_DestroyTexture(TBG1);
         SDL_FreeSurface(SBG1);
     }else if(ran%3==1){
-        SDL_Surface *SBG1= IMG_Load("./res/1087.png_860.png");
+        SDL_Surface *SBG1= IMG_Load("./res/1087.png_860(1)(1).png");
         SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
         SDL_Rect RBG1={x_gold2, 45, 75, 75};
         SDL_RenderCopy(Renderer, TBG1, NULL, &RBG1);
@@ -369,7 +486,7 @@ void gold_create(){
         SDL_DestroyTexture(TBG1);
         SDL_FreeSurface(SBG1);
     }else if(ran%3==2){
-        SDL_Surface *SBG1= IMG_Load("./res/1087.png_860.png");
+        SDL_Surface *SBG1= IMG_Load("./res/1087.png_860(1)(1).png");
         SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
         SDL_Rect RBG1={x_gold3, 445, 75, 75};
         SDL_RenderCopy(Renderer, TBG1, NULL, &RBG1);
@@ -378,10 +495,186 @@ void gold_create(){
         SDL_FreeSurface(SBG1);
     }
 }
+void star_create(){
+    ran=rand();
+    if(ran%3==0){
+        SDL_Surface *SBG1= IMG_Load("./res/e50c92c1c3adf08e95d5404d80d22f6f(1)(1).png");
+        SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
+        SDL_Rect RBG1={x_star1, 245, 75, 75};
+        SDL_RenderCopy(Renderer, TBG1, NULL, &RBG1);
+        flag21=1;
+        SDL_DestroyTexture(TBG1);
+        SDL_FreeSurface(SBG1);
+    }else if(ran%3==1){
+        SDL_Surface *SBG1= IMG_Load("./res/e50c92c1c3adf08e95d5404d80d22f6f(1)(1).png");
+        SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
+        SDL_Rect RBG1={x_star2, 45, 75, 75};
+        SDL_RenderCopy(Renderer, TBG1, NULL, &RBG1);
+        flag22=1;
+        SDL_DestroyTexture(TBG1);
+        SDL_FreeSurface(SBG1);
+    }else if(ran%3==2){
+        SDL_Surface *SBG1= IMG_Load("./res/e50c92c1c3adf08e95d5404d80d22f6f(1)(1).png");
+        SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
+        SDL_Rect RBG1={x_star3, 445, 75, 75};
+        SDL_RenderCopy(Renderer, TBG1, NULL, &RBG1);
+        flag23=1;
+        SDL_DestroyTexture(TBG1);
+        SDL_FreeSurface(SBG1);
+    }
+}
+void star_printf1(){
+    timer21++;
+    x_star1-=speed;
+    SDL_Surface *SBG1= IMG_Load("./res/e50c92c1c3adf08e95d5404d80d22f6f(1)(1).png");
+    SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
+    SDL_Rect RBG1={x_star1, 245, 75, 75};
+    if(floor1==1&&timer21==(900/speed)){
+        flag21=0;
+        ifstar=1;
+        x_star1=1000;
+        timer21=0;
+    }else if(timer21>1000/speed){
+        flag21=0;
+        x_star1=1000;
+        timer21=0;
+    }
+    SDL_RenderCopy(Renderer, TBG1, NULL, &RBG1);
+    SDL_DestroyTexture(TBG1);
+    SDL_FreeSurface(SBG1);
+}
+void star_printf2(){
+    timer22++;
+    x_star2-=speed;
+    SDL_Surface *SBG1= IMG_Load("./res/e50c92c1c3adf08e95d5404d80d22f6f(1)(1).png");
+    SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
+    SDL_Rect RBG1={x_star2, 45, 75, 75};
+    if(floor1==0&&timer22==(900/speed)){
+        flag22=0;
+        ifstar=1;
+        x_star2=1000;
+        timer22=0;
+    }else if(timer22>1000/speed){
+        flag22=0;
+        x_star2=1000;
+        timer22=0;
+    }
+    SDL_RenderCopy(Renderer, TBG1, NULL, &RBG1);
+    SDL_DestroyTexture(TBG1);
+    SDL_FreeSurface(SBG1);
+}
+void star_printf3(){
+    timer23++;
+    x_star3-=speed;
+    SDL_Surface *SBG1= IMG_Load("./res/e50c92c1c3adf08e95d5404d80d22f6f(1)(1).png");
+    SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
+    SDL_Rect RBG1={x_star3, 445, 75, 75};
+    if(floor1==2&&timer23==(900/speed)){
+        flag23=0;
+        ifstar=1;
+        x_star3=1000;
+        timer23=0;
+    }else if(timer23>1000/speed){
+        flag23=0;
+        x_star3=1000;
+        timer23=0;
+    }
+    SDL_RenderCopy(Renderer, TBG1, NULL, &RBG1);
+    SDL_DestroyTexture(TBG1);
+    SDL_FreeSurface(SBG1);
+}
+void shield_create(){
+    ran=rand();
+    if(ran%3==0){
+        SDL_Surface *SBG1= IMG_Load("./res/1.png");
+        SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
+        SDL_Rect RBG1={x_shield1, 245, 75, 75};
+        SDL_RenderCopy(Renderer, TBG1, NULL, &RBG1);
+        flag11=1;
+        SDL_DestroyTexture(TBG1);
+        SDL_FreeSurface(SBG1);
+    }else if(ran%3==1){
+        SDL_Surface *SBG1= IMG_Load("./res/1.png");
+        SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
+        SDL_Rect RBG1={x_shield2, 45, 75, 75};
+        SDL_RenderCopy(Renderer, TBG1, NULL, &RBG1);
+        flag12=1;
+        SDL_DestroyTexture(TBG1);
+        SDL_FreeSurface(SBG1);
+    }else if(ran%3==2){
+        SDL_Surface *SBG1= IMG_Load("./res/1.png");
+        SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
+        SDL_Rect RBG1={x_shield3, 445, 75, 75};
+        SDL_RenderCopy(Renderer, TBG1, NULL, &RBG1);
+        flag13=1;
+        SDL_DestroyTexture(TBG1);
+        SDL_FreeSurface(SBG1);
+    }
+}
+void shield_printf1(){
+    timer11++;
+    x_shield1-=speed;
+    SDL_Surface *SBG1= IMG_Load("./res/1.png");
+    SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
+    SDL_Rect RBG1={x_shield1, 245, 75, 75};
+    if(floor1==1&&timer11==(900/speed)){
+        flag11=0;
+        ifshield=1;
+        x_shield1=1000;
+        timer11=0;
+    }else if(timer11>1000/speed){
+        flag11=0;
+        x_shield1=1000;
+        timer11=0;
+    }
+    SDL_RenderCopy(Renderer, TBG1, NULL, &RBG1);
+    SDL_DestroyTexture(TBG1);
+    SDL_FreeSurface(SBG1);
+}
+void shield_printf2(){
+    timer12++;
+    x_shield2-=speed;
+    SDL_Surface *SBG1= IMG_Load("./res/1.png");
+    SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
+    SDL_Rect RBG1={x_shield2, 45, 75, 75};
+    if(floor1==0&&timer12==(900/speed)){
+        flag12=0;
+        ifshield=1;
+        x_shield2=1000;
+        timer12=0;
+    }else if(timer12>1000/speed){
+        flag12=0;
+        x_shield2=1000;
+        timer12=0;
+    }
+    SDL_RenderCopy(Renderer, TBG1, NULL, &RBG1);
+    SDL_DestroyTexture(TBG1);
+    SDL_FreeSurface(SBG1);
+}
+void shield_printf3(){
+    timer13++;
+    x_shield3-=speed;
+    SDL_Surface *SBG1= IMG_Load("./res/1.png");
+    SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
+    SDL_Rect RBG1={x_shield3, 445, 75, 75};
+    if(floor1==2&&timer13==(900/speed)){
+        flag13=0;
+        ifshield=1;
+        x_shield3=1000;
+        timer13=0;
+    }else if(timer13>1000/speed){
+        flag13=0;
+        x_shield3=1000;
+        timer13=0;
+    }
+    SDL_RenderCopy(Renderer, TBG1, NULL, &RBG1);
+    SDL_DestroyTexture(TBG1);
+    SDL_FreeSurface(SBG1);
+}
 void gold_printf1(){
     timer++;
     x_gold1-=speed;
-    SDL_Surface *SBG1= IMG_Load("./res/1087.png_860.png");
+    SDL_Surface *SBG1= IMG_Load("./res/1087.png_860(1)(1).png");
     SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
     SDL_Rect RBG1={x_gold1, 245, 75, 75};
     if(floor1==1&&timer==(900/speed)){
@@ -401,7 +694,7 @@ void gold_printf1(){
 void gold_printf2(){
     timer2++;
     x_gold2-=speed;
-    SDL_Surface *SBG1= IMG_Load("./res/1087.png_860.png");
+    SDL_Surface *SBG1= IMG_Load("./res/1087.png_860(1)(1).png");
     SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
     SDL_Rect RBG1={x_gold2, 45, 75, 75};
     if(floor1==0&&timer2==900/speed){
@@ -421,7 +714,7 @@ void gold_printf2(){
 void gold_printf3(){
     timer3++;
     x_gold3-=speed;
-    SDL_Surface *SBG1= IMG_Load("./res/1087.png_860.png");
+    SDL_Surface *SBG1= IMG_Load("./res/1087.png_860(1)(1).png");
     SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
     SDL_Rect RBG1={x_gold3, 445, 75, 75};
     if(floor1==2&&timer3==900/speed){
@@ -529,7 +822,11 @@ void object_printf11(){
     SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
     SDL_Rect RBG1={x_block11, 215, 50, 50};
     if(floor1==1&&timer41==(900/speed)&&stage!=1){
-        hp--;
+        if(ifshield){
+            ifshield=0;
+        }else{
+            hp--;
+        }
     }else if(timer41>1000/speed){
         flag41=0;
         x_block11=1000;
@@ -546,7 +843,11 @@ void object_printf12(){
     SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
     SDL_Rect RBG1={x_block12, 15, 50, 50};
     if(floor1==0&&timer42==(900/speed)&&stage!=1){
-        hp--;
+        if(ifshield){
+            ifshield=0;
+        }else{
+            hp--;
+        }
     }else if(timer42>1000/speed){
         flag42=0;
         x_block12=1000;
@@ -563,7 +864,11 @@ void object_printf13(){
     SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
     SDL_Rect RBG1={x_block13, 415, 50, 50};
     if(floor1==2&&timer43==(900/speed)&&stage!=1){
-        hp--;
+        if(ifshield){
+            ifshield=0;
+        }else{
+            hp--;
+        }
     }else if(timer43>1000/speed){
         flag43=0;
         x_block13=1000;
@@ -580,7 +885,11 @@ void object_printf21(){
     SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
     SDL_Rect RBG1={x_block21, 275, 50, 50};
     if(floor1==1&&timer51==(900/speed)&&stage!=2){
-        hp--;
+        if(ifshield){
+            ifshield=0;
+        }else{
+            hp--;
+        }
     }else if(timer51>1000/speed){
         flag51=0;
         x_block21=1000;
@@ -597,7 +906,11 @@ void object_printf22(){
     SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
     SDL_Rect RBG1={x_block22, 75, 50, 50};
     if(floor1==0&&timer52==(900/speed)&&stage!=2){
-        hp--;
+        if(ifshield){
+            ifshield=0;
+        }else{
+            hp--;
+        }
     }else if(timer52>1000/speed){
         flag52=0;
         x_block22=1000;
@@ -614,7 +927,11 @@ void object_printf23(){
     SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
     SDL_Rect RBG1={x_block23, 475, 50, 50};
     if(floor1==2&&timer53==(900/speed)&&stage!=2){
-        hp--;
+        if(ifshield){
+            ifshield=0;
+        }else{
+            hp--;
+        }
     }else if(timer53>1000/speed){
         flag53=0;
         x_block23=1000;
@@ -631,7 +948,11 @@ void object_printf31(){
     SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
     SDL_Rect RBG1={x_block31, 225, 100, 100};
     if(floor1==1&&timer61==(900/speed)){
-        hp--;
+        if(ifshield){
+            ifshield=0;
+        }else{
+            hp--;
+        }
     }else if(timer61>1000/speed){
         flag61=0;
         x_block31=1000;
@@ -648,7 +969,11 @@ void object_printf32(){
     SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
     SDL_Rect RBG1={x_block32, 25, 100, 100};
     if(floor1==0&&timer62==(900/speed)){
-        hp--;
+        if(ifshield){
+            ifshield=0;
+        }else{
+            hp--;
+        }
     }else if(timer62>1000/speed){
         flag62=0;
         x_block32=1000;
@@ -665,7 +990,11 @@ void object_printf33(){
     SDL_Texture *TBG1 = SDL_CreateTextureFromSurface(Renderer, SBG1);
     SDL_Rect RBG1={x_block33, 425, 100, 100};
     if(floor1==2&&timer63==(900/speed)){
-        hp--;
+        if(ifshield){
+            ifshield=0;
+        }else{
+            hp--;
+        }
     }else if(timer63>1000/speed){
         flag63=0;
         x_block33=1000;
@@ -720,23 +1049,34 @@ void paint_end(){
     SDL_SetRenderDrawColor(Renderer, 0xff, 0xff, 0xff, 0xff);
     SDL_RenderClear(Renderer);
     char str1[10005] = {0};
+    char str2[10005] ={ 0};
+    if(score>highest_score){
+        highest_score=score;
+    }
     sprintf(str1, "SCORE : %d",  score);
+    sprintf(str2,"HIGHEST : %d",highest_score);
     TTF_Font *ftt5 = TTF_OpenFont("./res/pixel_combat.ttf", 72);
     TTF_Font *ftt6 = TTF_OpenFont("./res/pixel_combat.ttf", 32);
     SDL_Color ctt5 = {0xff, 0xcf, 0xc0, 0xff};
     SDL_Surface *stt5 = TTF_RenderText_Blended(ftt5, str1, ctt5);
+    SDL_Surface *stt7 = TTF_RenderText_Blended(ftt5, str2, ctt5);
     SDL_Surface *stt6 = TTF_RenderText_Blended(ftt6, "press '7' to quit,press '8' to restart", ctt5);
     SDL_Texture *ttt5 = SDL_CreateTextureFromSurface(Renderer, stt5);
     SDL_Texture *ttt6 = SDL_CreateTextureFromSurface(Renderer, stt6);
+    SDL_Texture *ttt7 = SDL_CreateTextureFromSurface(Renderer, stt7);
     SDL_Rect rtt5 = {250, 100, stt5->w, stt5->h};
+    SDL_Rect rtt7 = {225, 250, stt7->w, stt7->h};
     SDL_Rect rtt6 = {150, 400, stt6->w, stt6->h};
     SDL_RenderCopy(Renderer, ttt5, NULL, &rtt5);
     SDL_RenderCopy(Renderer, ttt6, NULL, &rtt6);
+    SDL_RenderCopy(Renderer, ttt7, NULL, &rtt7);
     SDL_RenderPresent(Renderer);
     SDL_DestroyTexture(ttt5);
     SDL_DestroyTexture(ttt6);
+    SDL_DestroyTexture(ttt7);
     SDL_FreeSurface(stt5);
     SDL_FreeSurface(stt6);
+    SDL_FreeSurface(stt7);
     TTF_CloseFont(ftt5);
     TTF_CloseFont(ftt6);
 }
